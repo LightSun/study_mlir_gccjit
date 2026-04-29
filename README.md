@@ -27,9 +27,9 @@ cmake --build . --target check-mlir
 
 ## test
 ```
-LLVM_TOOL_DIR=/media/heaven7/Elements_SE/study/tools/LLVM/llvm_install/bin
+LLVM_TOOL_DIR=xxx/llvm_install/bin
 
-SRCD=/media/heaven7/Elements_SE/study/mine/TODO/mlir_libgccjit/mlir-gccjit/test
+SRCD=xxx/mlir_libgccjit/mlir-gccjit/test
 
 SRC_FILE=${SRCD}/compile/global.mlir
 
