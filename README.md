@@ -4,6 +4,12 @@
 - ubuntu 24
 - libgccjit-14-dev
 - llvm-18
+- ```
+   sudo apt-get update
+          sudo apt-get install -y gcc-14 g++-14 cmake ninja-build llvm-18-dev llvm-18-tools \
+          libmlir-18-dev libgccjit-14-dev mlir-18-tools python3 python3-pip
+          pip install lit
+  ```
 
 ## my env (mlir_gccjit-260429) 
 - ubuntu18
