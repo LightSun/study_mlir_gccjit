@@ -1,6 +1,11 @@
 # study_mlir_gccjit.
 
-## my env (mlir_gccjit-260429)
+## CI env
+- ubuntu 24
+- libgccjit-14-dev
+- llvm-18
+
+## my env (mlir_gccjit-260429) 
 - ubuntu18
 - apt install libgccjit-16-dev
 - build llvm-mlir. like [onnx-mlir](https://github.com/onnx/onnx-mlir/blob/main/docs/BuildOnLinuxOSX.md#mlir)
