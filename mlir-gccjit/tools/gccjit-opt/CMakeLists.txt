@@ -35,9 +35,10 @@ target_link_libraries(gccjit-opt
     MLIRMemRefDialect
     MLIRParser
     MLIRPass
-    MLIRRegisterAllDialects
-    MLIRRegisterAllExtensions
-    MLIRRegisterAllPasses
+    # bellow enable in llvm22
+    #MLIRRegisterAllDialects
+    #MLIRRegisterAllExtensions
+    #MLIRRegisterAllPasses
     MLIRSideEffectInterfaces
     MLIRSupport
     MLIRTargetLLVMIRExport

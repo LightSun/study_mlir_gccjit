@@ -1,7 +1,7 @@
 include_guard(GLOBAL)
 
-include_directories(/usr/lib/gcc/x86_64-linux-gnu/16/include)
-set(GCCJIT_LIBRARY /usr/lib/gcc/x86_64-linux-gnu/16/libgccjit.so)
+include_directories(/usr/lib/gcc/x86_64-linux-gnu/14/include)
+set(GCCJIT_LIBRARY /usr/lib/gcc/x86_64-linux-gnu/14/libgccjit.so)
 
 set(GCCJIT_ROOT "" CACHE PATH "Path to GCCJIT installation")
 set(GCCJIT_INCLUDE_DIR "" CACHE PATH "Path to GCCJIT include directory")

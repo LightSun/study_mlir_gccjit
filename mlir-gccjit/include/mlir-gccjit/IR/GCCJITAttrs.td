@@ -68,7 +68,7 @@ def TLSModelAttr : GCCJIT_Attr<"TLSModel", "tls_model"> {
 //===----------------------------------------------------------------------===//
 // Integer Attrs .
 //===----------------------------------------------------------------------===//
-//::mlir::APInt -> APIntParameter<"">
+// "::mlir::APInt" -> APIntParameter<"">
 def IntAttr : GCCJIT_Attr<"Int", "int", [TypedAttrInterface]> {
   let summary = "An attribute containing a integer value";
   let description = [{
@@ -82,7 +82,7 @@ def IntAttr : GCCJIT_Attr<"Int", "int", [TypedAttrInterface]> {
   }];
   let parameters = (ins
     AttributeSelfTypeParameter<"", "mlir::gccjit::IntType">:$type,
-    APIntParameter<"">:$value
+    "::mlir::APInt":$value
   );
   let hasCustomAssemblyFormat = 1;
 }
@@ -111,6 +111,7 @@ def FloatAttr : GCCJIT_Attr<"Float", "float", [TypedAttrInterface]> {
 
 //===----------------------------------------------------------------------===//
 // Special constant attributes
+// #gccjit.zero  : 表示属性
 //===----------------------------------------------------------------------===//
 
 def ZeroAttr : GCCJIT_Attr<"Zero", "zero", [TypedAttrInterface]> {

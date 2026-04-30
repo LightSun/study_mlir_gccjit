@@ -235,7 +235,8 @@ Value GCCJITLoweringPattern<T>::MemRefDescriptor::getAlignedPtr(
 template <typename T>
 Value GCCJITLoweringPattern<T>::MemRefDescriptor::getMemRefDescriptorBufferPtr(
     Location loc) const {
-  auto [strides, offsetCst] = type.getStridesAndOffset();
+  //auto [strides, offsetCst] = type.getStridesAndOffset();
+  auto [strides, offsetCst] = getStridesAndOffset(type);
   auto alignedPtr = getAlignedPtr(loc);
   // For zero offsets, we already have the base pointer.
   if (offsetCst == 0)
@@ -261,8 +262,8 @@ Value GCCJITLoweringPattern<T>::MemRefDescriptor::getStridedElementLValue(
     Location loc, Operation *materializationPoint, ValueRange indices) const {
   Value materializedMemref = nullptr;
   Value ptrToStrideField = nullptr;
-  //auto [strides, offset] = getStridesAndOffset(type);
-  auto [strides, offset] = type.getStridesAndOffset();
+  auto [strides, offset] = getStridesAndOffset(type);
+  //auto [strides, offset] = type.getStridesAndOffset();
   auto indexTy = IntType::get(rewriter.getContext(), GCC_JIT_TYPE_SIZE_T);
   auto elementType =
       pattern.getTypeConverter()->convertType(type.getElementType());
@@ -658,7 +659,7 @@ void removeAllAssumeAlignmentOps(ModuleOp moduleOp,
           auto *user = use.getOwner();
           if (isa<memref::AssumeAlignmentOp>(user))
             continue;
-          if (domInfo.properlyDominates(op, user, true))
+          if (domInfo.properlyDominates(op, user))
             replacement[op].push_back(&use);
         }
       });

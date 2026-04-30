@@ -18,6 +18,7 @@ module @vector attributes {
 
     gccjit.func always_inline @alpha_flipcase_small(!charptr, !size_t) {
         ^entry(%0: !gccjit.lvalue<!charptr>, %1: !gccjit.lvalue<!size_t>):
+	    //char c32 = 32;
             %c32 = gccjit.expr lazy { 
                 %a = gccjit.const #gccjit.int<32> : !char
                 gccjit.return %a : !char
@@ -26,6 +27,7 @@ module @vector attributes {
                 %b = gccjit.const #gccjit.zero : !size_t
                 gccjit.return %b : !size_t
             } : !size_t
+	    //const size_t one = 1;	
             %one = gccjit.expr lazy { 
                 %c = gccjit.const #gccjit.one : !size_t
                 gccjit.return %c : !size_t
@@ -43,8 +45,10 @@ module @vector attributes {
             gccjit.conditional (%cond : !bool), ^loop.exit, ^loop.body
 
         ^loop.body:
+	    //%lv = &str[iter]
             %lv = gccjit.deref (%0 : !gccjit.lvalue<!charptr>, %iter: !gccjit.lvalue<!size_t>)
                 : !gccjit.lvalue<!char>
+	    //str[iter] ^= 32 （大小写翻转）
             gccjit.update bitwise_xor %c32 to %lv : !char, !gccjit.lvalue<!char>
             gccjit.update plus %one to %iter : !size_t, !gccjit.lvalue<!size_t>
             gccjit.jump ^loop.header
@@ -80,10 +84,12 @@ module @vector attributes {
         
         ^loop.header:
             %cond = gccjit.expr lazy {
+		// -
                 %diff = gccjit.binary minus (%1 : !gccjit.lvalue<!size_t>, %iter : !gccjit.lvalue<!size_t>) : !size_t
                 %flag = gccjit.compare lt (%diff : !size_t, %c16 : !size_t) : !bool
                 gccjit.return %flag : !bool
             } : !bool
+	    // like: if ... else ...
             gccjit.conditional (%cond : !bool), ^loop.exit, ^loop.body
 
         ^loop.body:

@@ -1,4 +1,4 @@
-set(LLVM_DIR /media/heaven7/Elements_SE/study/tools/LLVM/llvm_install)
+set(LLVM_DIR /media/heaven7/Elements_SE/study/tools/LLVM18/llvm_install)
 set(ENV{PATH} "${LLVM_DIR}/bin;$ENV{PATH}")
 set(MLIR_DIR ${LLVM_DIR}/lib/cmake/mlir)
 #
