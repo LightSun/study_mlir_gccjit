@@ -14,7 +14,7 @@
 ## my env (mlir_gccjit-260429) 
 - ubuntu18
 - apt install libgccjit-16-dev
-- build llvm-mlir. like [onnx-mlir](https://github.com/onnx/onnx-mlir/blob/main/docs/BuildOnLinuxOSX.md#mlir)
+- build llvm-mlir（llvm22）. like [onnx-mlir](https://github.com/onnx/onnx-mlir/blob/main/docs/BuildOnLinuxOSX.md#mlir)
 ```
 git clone -n https://github.com/llvm/llvm-project.git
 # Check out a specific branch that is known to work with ONNX-MLIR.
