@@ -1,9 +1,20 @@
-# study_mlir_gccjit
+# study_mlir_gccjit.
 
-## my env
+## CI env
+- ubuntu 24
+- libgccjit-14-dev
+- llvm-18
+- ```
+   sudo apt-get update
+          sudo apt-get install -y gcc-14 g++-14 cmake ninja-build llvm-18-dev llvm-18-tools \
+          libmlir-18-dev libgccjit-14-dev mlir-18-tools python3 python3-pip
+          pip install lit
+  ```
+
+## my env (mlir_gccjit-260429) 
 - ubuntu18
 - apt install libgccjit-16-dev
-- build llvm-mlir. like onnx-mlir
+- build llvm-mlir（llvm22）. like [onnx-mlir](https://github.com/onnx/onnx-mlir/blob/main/docs/BuildOnLinuxOSX.md#mlir)
 ```
 git clone -n https://github.com/llvm/llvm-project.git
 # Check out a specific branch that is known to work with ONNX-MLIR.
@@ -27,9 +38,9 @@ cmake --build . --target check-mlir
 
 ## test
 ```
-LLVM_TOOL_DIR=/media/heaven7/Elements_SE/study/tools/LLVM/llvm_install/bin
+LLVM_TOOL_DIR=xxx/llvm_install/bin
 
-SRCD=/media/heaven7/Elements_SE/study/mine/TODO/mlir_libgccjit/mlir-gccjit/test
+SRCD=xxx/mlir_libgccjit/mlir-gccjit/test
 
 SRC_FILE=${SRCD}/compile/global.mlir
 
