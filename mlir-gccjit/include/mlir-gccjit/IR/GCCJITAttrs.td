@@ -42,6 +42,7 @@ def TLSModelEnum : I32EnumAttr<"TLSModelEnum", "TLS model",
 
 def TLSModelAttr : GCCJIT_Attr<"TLSModel", "tls_model"> {
   let summary = "Thread Local Storage model";
+  //auto gen: getModel()
   let parameters = (ins "TLSModelEnumAttr":$model);
   let description = [{
     Represents the Thread Local Storage model for the lvalue.
@@ -80,6 +81,8 @@ def IntAttr : GCCJIT_Attr<"Int", "int", [TypedAttrInterface]> {
     #gccjit.int<42>
     ```
   }];
+  //AttributeSelfTypeParameter表明该属性的类型信息可由其自身推导或存储。
+  //通常 TypedAttr 需要返回一个类型，这里明确指定类型为 mlir::gccjit::IntType
   let parameters = (ins
     AttributeSelfTypeParameter<"", "mlir::gccjit::IntType">:$type,
     "::mlir::APInt":$value
@@ -114,16 +117,26 @@ def FloatAttr : GCCJIT_Attr<"Float", "float", [TypedAttrInterface]> {
 // #gccjit.zero  : 表示属性
 //===----------------------------------------------------------------------===//
 
+//[TypedAttrInterface] → 实现 TypedAttr 接口，表示该属性关联一个类型（即它是带类型的属性
 def ZeroAttr : GCCJIT_Attr<"Zero", "zero", [TypedAttrInterface]> {
   let summary = "An attribute containing a constant zero";
   let description = [{
     A `#gccjit.zero` attribute represents a constant zero value of some
     libgccjit integer or floating-point type.
   }];
-
+/*
+用于存储该属性的类型信息（通过 TypedAttr::getType() 返回）。由于没有像 IntAttr 那样指定
+具体类型类（如 mlir::gccjit::IntType），这里约束更宽松：允许任意满足 TypedAttr 要求的类型，
+但在验证时（genVerifyDecl = 1）会检查是否为整数或浮点类型。
+*/
   let parameters = (ins AttributeSelfTypeParameter<"">:$type);
 
   let assemblyFormat = "";
+/* 生成验证定义
+LogicalResult
+ZeroAttr::verify(llvm::function_ref<InFlightDiagnostic()> emitError,
+                 Type type);
+  */
   let genVerifyDecl = 1;
 }
 
@@ -204,7 +217,12 @@ def FieldAttr : GCCJIT_Attr<"Field", "field"> {
   ];
 
   // attribute can eat up the `:` separator, so we need to move the name to the
-  // front
+  // front. ^ 表示在可选项出现时，后续内容不需要额外标点分隔。
+  /*
+#gccjit.field<"x" i32>                        // 普通字段
+#gccjit.field<"flags" i32 : 8>                // 8位位域
+#gccjit.field<"source" i32 #gccjit.loc<...>>  // 带源位置
+*/
   let assemblyFormat = [{
     `<` $name $type  (`:` $bitWidth^)? ($loc^)? `>`
   }];
@@ -263,6 +281,12 @@ def FnAttrEnum : I32EnumAttr<"FnAttrEnum", "Function attribute",
   let cppNamespace = "mlir::gccjit";
 }
 
+/*
+gccjit.function @foo() attributes { #gccjit.fn_attr<cold>, #gccjit.fn_attr<always_inline> } {
+  ...
+}
+这种设计使得 gccjit 能够完整表达 libgccjit 支持的各种函数属性，同时保持 MLIR 的通用性。
+*/
 def FnAttr : GCCJIT_Attr<"Function", "fn_attr"> {
   let summary = "Function Attribute";
   let description = [{
@@ -273,6 +297,20 @@ def FnAttr : GCCJIT_Attr<"Function", "fn_attr"> {
     - integer array attributes: those with an array of integers.
   }];
 
+  /* may be like:
+// unit attribute
+#gccjit.fn_attr<always_inline>
+
+// string attribute
+#gccjit.fn_attr<target "sse2">
+
+// integer array attribute
+#gccjit.fn_attr<nonnull [1, 2]>
+
+// alias attribute (string probably)
+#gccjit.fn_attr<alias "my_alias">
+//DenseI32ArrayAttr: 表示密集数组.比如vector<int>
+  */
   let parameters = (ins
     "FnAttrEnumAttr":$attr,
     OptionalParameter<"std::optional<mlir::StringAttr>">:$strValue,

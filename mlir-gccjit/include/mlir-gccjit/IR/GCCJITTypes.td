@@ -41,7 +41,10 @@ def GCCJIT_FuncType : GCCJIT_Type<"Func", "func"> {
     The `!gccjit.func` is a function type. It consists of a single return type,
     a list of parameter types and can optionally be variadic.
   }];
-
+/*
+!gccjit.func<i32 (i32, f32)>
+!gccjit.func<void (..., i32, ...)>   // 若变参
+  */
   let parameters = (ins ArrayRefParameter<"Type">:$inputs, "Type":$returnType,
                         "bool":$varArg);
   let assemblyFormat = [{
@@ -140,6 +143,8 @@ def GCCJIT_IntType : GCCJIT_Type<"Int", "int"> {
   let hasCustomAssemblyFormat = 1;
 }
 
+//整数约束， CPred: 表示谓词
+//基类 Type 的三个参数: 条件（And<[...]>）, 描述字符串, 应用的类型
 class SpecificInt<string enumValue>
   : Type<And<[
         CPred<"::mlir::isa<::mlir::gccjit::IntType>($_self)">,
@@ -214,6 +219,13 @@ def GCCJIT_VectorType : GCCJIT_Type<"Vector", "vector"> {
 //===----------------------------------------------------------------------===//
 // Struct and union type
 //===----------------------------------------------------------------------===//
+//!gccjit.struct<"Point", [#gccjit.field<"x" i32>, #gccjit.field<"y" i32>]>
+//!gccjit.union<"Value", [#gccjit.field<"int_val" i32>, #gccjit.field<"float_val" f32>]>
+/*
+特性列表：DeclareTypeInterfaceMethods<GCCJITRecordTypeInterface> – 这会自动声明该类型实现了
+GCCJITRecordTypeInterface 接口，并要求具体类型提供接口中定义的方法（
+如 isUnion、getRecordName、getRecordFields、getRecordLoc）。
+*/
 class GCCJIT_RecordType<string name, string typeMnemonic>
     : GCCJIT_Type<name, typeMnemonic, [
         DeclareTypeInterfaceMethods<GCCJITRecordTypeInterface>
@@ -265,5 +277,22 @@ def GCCJIT_UnionType : GCCJIT_RecordType<"Union", "union"> {
     The `!gccjit.union` type represents a GCCJIT union type.
   }];
 }
+/*
+// 定义一个空结构体
+!gccjit.struct<"Empty", []>
+
+// 定义一个包含两个字段的结构体
+!gccjit.struct<"Point", [
+#gccjit.field<"x", i32>,
+#gccjit.field<"y", i32>
+       ]>
+
+// 定义一个联合体，带源位置
+#loc = #gccjit.loc<file:"foo.c", line:42>
+    !gccjit.union<"Value", [
+#gccjit.field<"int_val", i32>,
+#gccjit.field<"float_val", f32>
+    ], #loc>
+*/
 
 #endif // GCCJIT_TYPES

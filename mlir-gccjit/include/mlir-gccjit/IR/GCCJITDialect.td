@@ -3,6 +3,7 @@
 
 include "mlir/IR/OpBase.td"
 
+//
 def GCCJIT_Dialect : Dialect {
   let name = "gccjit";
 
@@ -13,14 +14,15 @@ def GCCJIT_Dialect : Dialect {
 
   let cppNamespace = "::mlir::gccjit";
 
+  //设置为 0 表示不使用默认的属性/类型打印与解析器
   let useDefaultAttributePrinterParser = 0;
   let useDefaultTypePrinterParser = 0;
-
+  //依赖方言
   let dependentDialects = [
     "::mlir::BuiltinDialect",
     "::mlir::func::FuncDialect",
   ];
-
+  //额外的类定义. 属性和类型： 注册，解析，打印
   let extraClassDeclaration = [{
     void registerTypes();
     void registerAttributes();
